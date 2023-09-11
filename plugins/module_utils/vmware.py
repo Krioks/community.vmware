@@ -1261,6 +1261,8 @@ class PyVmomi(object):
                 for vm in vms:
                     # Check if user has provided same path as virtual machine
                     actual_vm_folder_path = self.get_vm_path(content=self.content, vm_name=vm)
+                    if not actual_vm_folder_path:
+                            continue
                     if not actual_vm_folder_path.startswith("%s%s" % (dcpath, user_defined_dc)):
                         continue
                     if user_desired_path in actual_vm_folder_path:
