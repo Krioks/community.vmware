@@ -1301,26 +1301,20 @@ class PyVmomi(object):
         """
         Find the path of virtual machine.
         Args:
-            content: VMware content object
+            content: VMware content object: warning – this is not a used parameter
             vm_name: virtual machine managed object
-
         Returns: Folder of virtual machine if exists, else None
-
         """
-        folder_name = None
-        folder = vm_name.parent
-        if folder:
-            folder_name = folder.name
-            fp = folder.parent
-            # climb back up the tree to find our path, stop before the root folder
-            while fp is not None and fp.name is not None and fp != content.rootFolder:
-                folder_name = fp.name + '/' + folder_name
-                try:
-                    fp = fp.parent
-                except Exception:
-                    break
-            folder_name = '/' + folder_name
-        return folder_name
+        vm_path_list = []
+        while vm_name.parent:
+            vm_path_list.append(f'/{vm_name.parent.name}')
+            vm_name = vm_name.parent
+        if vm_path_list:
+            # reverse list and remove the root folder
+            vm_path_list.reverse()
+            return ''.join(vm_path_list[1:])
+        else:
+            return
 
     def get_vm_or_template(self, template_name=None):
         """
